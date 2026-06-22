@@ -1,24 +1,40 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { RevealWords } from './Reveal'
 import { Icon } from './Icons'
 import { heroImage } from '../data/content'
 
 export default function Hero() {
   const ref = useRef(null)
+  const imgRef = useRef(null)
+  const [loaded, setLoaded] = useState(false)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const bgScale = useTransform(scrollYProgress, [0, 1], [1.05, 1.18])
   const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0])
 
+  // reveal the image only once it has decoded — avoids the "pop" on first paint
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true)
+  }, [])
+
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100svh] items-center overflow-hidden">
       {/* Background photo */}
-      <motion.div className="absolute inset-0 z-0" style={{ y: bgY, scale: bgScale }}>
+      <motion.div
+        className="absolute inset-0 z-0 transform-gpu"
+        style={{ y: bgY, scale: bgScale, willChange: 'transform' }}
+      >
         <img
+          ref={imgRef}
           src={heroImage}
           alt="Ухоженные руки с маникюром на тёмном шёлке"
-          className="h-full w-full object-cover object-center"
+          fetchpriority="high"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          className={`h-full w-full object-cover object-center transition-opacity duration-[900ms] ease-out ${
+            loaded ? 'opacity-100' : 'opacity-0'
+          }`}
         />
       </motion.div>
 
