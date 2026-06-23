@@ -21,6 +21,8 @@ export const galleryImages = [
 export const bookingBg = '/assets/nails/booking-bg.webp'
 
 export const heroImage = '/assets/nails/hero.webp'
+export const heroVideo = '/assets/nails/hero.mp4'
+export const heroPoster = '/assets/nails/hero-poster.webp'
 export const ambienceImage = '/assets/nails/ambience.webp'
 export const portraitImage = '/assets/nails/portrait.webp'
 
